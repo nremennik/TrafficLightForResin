@@ -1,0 +1,165 @@
+<web-app xmlns="http://caucho.com/ns/resin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://caucho.com/ns/resin">
+
+    <multipart-form enable="true"/>
+
+    <database jndi-name='jdbc/opinions'>
+        <driver type="org.postgresql.Driver">
+            <url>jdbc:postgresql://localhost:5432/***</url>
+            <user>***</user>
+            <password>***</password>
+        </driver>
+        <max-connections>100</max-connections>
+        <max-idle-time>10s</max-idle-time>
+        <close-dangling-connections>true</close-dangling-connections>
+        <save-allocation-stack-trace>true</save-allocation-stack-trace>
+    </database>
+
+    <database jndi-name='jdbc/domdb'>
+        <driver type="oracle.jdbc.pool.OracleConnectionPoolDataSource">
+            <url>jdbc:oracle:thin:@dom.***.net:1521:domdb</url>
+            <user>***</user>
+            <password>***</password>
+        </driver>
+        <max-connections>100</max-connections>
+        <max-idle-time>60s</max-idle-time>
+        <close-dangling-connections>true</close-dangling-connections>
+        <save-allocation-stack-trace>true</save-allocation-stack-trace>
+    </database>
+
+    <servlet>
+        <servlet-name>Captcha</servlet-name>
+        <servlet-class>captcha.Captcha</servlet-class>
+        <!-- Font name (font should be installed on the server) -->
+        <!-- init-param>
+            <param-name>fontname</param-name>
+            <param-value>Arial</param-value>
+        </init-param -->
+        <!-- Font filename to install the font from (if font not installed) -->
+        <!-- init-param>
+            <param-name>fontfile</param-name>
+            <param-value>/var/www/base/fonts/arial.ttf</param-value>
+        </init-param -->
+        <!-- Background color in the [red],[green],[blue],[alpha] format, 0-255 values -->
+        <init-param>
+            <param-name>background-color</param-name>
+            <param-value>0,0,0,0</param-value>
+        </init-param>
+        <!-- Foreground color in the [red],[green],[blue],[alpha] format, 0-255 values -->
+        <init-param>
+            <param-name>foreground-color</param-name>
+            <param-value>0,15,35,255</param-value>
+        </init-param>
+        <!-- Image noice level in percents (random, so 100% does not mean everyting will be hidden -->
+        <init-param>
+            <param-name>noicelevel</param-name>
+            <param-value>0</param-value>
+        </init-param>
+        <!-- Image hide  level in percents (random, so 100% does not mean everyting will be hidden) -->
+        <init-param>
+            <param-name>hidelevel</param-name>
+            <param-value>20</param-value>
+        </init-param>
+        <!-- Font size -->
+        <init-param>
+            <param-name>fontsize</param-name>
+            <param-value>30</param-value>
+        </init-param>
+        <!-- Number of characters -->
+        <init-param>
+            <param-name>captchasize</param-name>
+            <param-value>4</param-value>
+        </init-param>
+        <!-- Image width in pixels -->
+        <init-param>
+            <param-name>width</param-name>
+            <param-value>150</param-value>
+        </init-param>
+        <!-- Image height in pixels -->
+        <init-param>
+            <param-name>height</param-name>
+            <param-value>50</param-value>
+        </init-param>
+        <!-- Use "calculator" function (i.e. solve simple math to get result) -->
+        <init-param>
+            <param-name>calculate</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <!-- Min intercharacter space jitter (i.e. 5 means that intercharacter space can be
+        reduced to up to 5% of the font size -->
+        <init-param>
+            <param-name>minspace</param-name>
+            <param-value>10</param-value>
+        </init-param>
+        <!-- Max intercharacter space jitter (i.e. 5 means that intercharacter space can be
+        increased to  up to 5% of the font size -->
+        <init-param>
+            <param-name>maxspace</param-name>
+            <param-value>20</param-value>
+        </init-param>
+        <!-- Max angle to rotate each digit -->
+        <init-param>
+            <param-name>maxangle</param-name>
+            <param-value>20</param-value>
+        </init-param>
+        <!-- Min font size jitter (i.e. 5 means that font size can be reduced to up to 5 points -->
+        <init-param>
+            <param-name>minsize</param-name>
+            <param-value>5</param-value>
+        </init-param>
+        <!-- Max font size jitter (i.e. 5 means that font size can be increased to up to 5 points -->
+        <init-param>
+            <param-name>maxsize</param-name>
+            <param-value>5</param-value>
+        </init-param>
+        <!-- Use bold font -->
+        <init-param>
+            <param-name>bold</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <!-- Use italic font -->
+        <init-param>
+            <param-name>italic</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <!-- Do not put characters in line -->
+        <init-param>
+            <param-name>noinline</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+
+    <servlet-mapping>
+        <servlet-name>Captcha</servlet-name>
+        <url-pattern>/captchacalc.png</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>jersey</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>
+                work.crossing
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.scanning.recursive</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>jersey</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+
+</web-app>
+
+
